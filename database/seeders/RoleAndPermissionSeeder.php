@@ -18,16 +18,16 @@ class RoleAndPermissionSeeder extends Seeder
         $admin = Role::create(['name' => 'admin']);
         $editor = Role::create(['name' => 'editor']);
         $viewer= Role::create(['name' => 'viewer']);
-        $createPermission = Permission::create(['name' => 'create']);
-        $updatePermission = Permission::create(['name' => 'update']);
-        $deletePermission = Permission::create(['name' => 'delete']);
-        $viewPermission =Permission::create(['name' => 'view']);
-        $enablePermission =Permission::create(['name' => 'enable']);
-        $disablePermission =Permission::create(['name' => 'disable']);
-        $super->givePermissionTo([$createPermission,$updatePermission,$deletePermission,$enablePermission,$disablePermission]);
-        $admin->givePermissionTo([$createPermission,$updatePermission,$deletePermission]);
-        $editor->givePermissionTo([$createPermission,$updatePermission,$deletePermission]);
-        $viewer->givePermissionTo([$viewPermission]);
+        $createPostPermission = Permission::create(['name' => 'Create Post']);
+        $updatePostPermission = Permission::create(['name' => 'Update Post']);
+        $deletePostPermission = Permission::create(['name' => 'Delete Post']);
+        $viewPostPermission =Permission::create(['name' => 'View Post']);
+        $updatePostStatusPermission =Permission::create(['name' => 'Update Post Status']);
+        $postHistoryTrack = Permission::create(['name'=>'Track Post History']);
+        $super->givePermissionTo([$createPostPermission,$updatePostPermission,$deletePostPermission,$updatePostStatusPermission,$postHistoryTrack]);
+        $admin->givePermissionTo([$createPostPermission,$updatePostPermission,$deletePostPermission,$updatePostStatusPermission]);
+        $editor->givePermissionTo([$createPostPermission,$updatePostPermission,$deletePostPermission]);
+        $viewer->givePermissionTo([$viewPostPermission]);
 
     }
     

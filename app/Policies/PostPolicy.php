@@ -13,7 +13,7 @@ class PostPolicy
     /**
      * Determine whether the user can view any posts.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return mixed
      */
     public function viewAny(User $user)
@@ -24,11 +24,11 @@ class PostPolicy
     /**
      * Determine whether the user can view the post.
      *
-     * @param  \App\User|null $user
-     * @param  \App\Post  $post
+     * @param  \App\Models\User|null $user
+     * @param  \App\Models\Post  $post
      * @return mixed
      */
-    public function view(?User $user, Post $post)
+    public function index(?User $user, Post $post)
     {
         if ($post->enable) {
             return true;
@@ -40,99 +40,89 @@ class PostPolicy
         }
 
         // admin overrides published status
-        if ($user->can('view')) {
+        if ($user->can('View Post')) {
             return true;
         }
-        if ($user->hasAnyRole(['editor', 'viewer', 'admin','super'])) {
+        if (auth()->check() && $user->hasAnyRole(['editor', 'viewer', 'admin', 'super'])) {
             return true;
         }
 
         // authors can view their own unpublished posts
-        return $user->id == $post->user_id;
+        return  $user->id == $post->user_id;
     }
 
     /**
      * Determine whether the user can create posts.
      *
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $user
      * @return mixed
      */
     public function create(User $user)
     {
-      
-      if($user->hasAnyRole(['editor', 'admin','super'])){
-        return true;
-      }
-      if ($user->can('create')) {
+
+        if (auth()->check() && $user->hasAnyRole(['admin', 'super','editor']) && auth()->user->can('Create Post')) {
             return true;
-    }
+        }
     }
 
     /**
      * Determine whether the user can update the post.
      *
-     * @param  \App\User  $user
-     * @param  \App\Post  $post
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Post  $post
      * @return mixed
      */
     public function update(User $user, Post $post)
     {
 
-        if($user->hasAnyRole(['editor', 'admin','super'])){
+        if ($user->hasAnyRole(['admin', 'super']) && auth()->user->can('Update Post')) {
             return true;
-          }
-        if ($user->can('create')) {
-                return true;
         }
-
-        if ($user->can('edit')) {
-            return $user->id == $post->user_id;
+        if (auth()->check() && $user->hasRole('editor') && auth()->user->can('Update Post') && auth()->id() == $post->user_id) {
+            return true;
         }
     }
 
     /**
      * Determine whether the user can delete the post.
      *
-     * @param  \App\User  $user
-     * @param  \App\Post  $post
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Post  $post
      * @return mixed
      */
     public function delete(User $user, Post $post)
     {
-        if ($user->can('delete')) {
-            return $user->id == $post->user_id;
-        }
-
-        if($user->hasAnyRole(['editor', 'admin','super'])){
+        if ($user->hasAnyRole(['admin', 'super'])&& auth()->user->can('Delete Post')) {
             return true;
-          }
+        }
+        return auth()->check() && $user->hasRole('editor') && auth()->user->can('Delete Post')  && auth()->id() == $post->user_id;
     }
 
     /**
      * Determine whether the user can restore the post.
      *
-     * @param  \App\User  $user
-     * @param  \App\Post  $post
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Post  $post
      * @return mixed
      */
     public function restore(User $user, Post $post)
     {
-        if($user->hasRole('super')){
+        if (auth()->check() && $user->hasRole('super')) {
             return true;
-          }
+        }
     }
 
     /**
      * Determine whether the user can permanently delete the post.
      *
-     * @param  \App\User  $user
-     * @param  \App\Post  $post
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Post  $post
      * @return mixed
      */
     public function forceDelete(User $user, Post $post)
     {
-        if($user->hasRole('super')){
+        if (auth()->check() && $user->hasRole('super')) {
             return true;
-          }
+        }
     }
 }
