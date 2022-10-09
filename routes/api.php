@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,15 +22,21 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 
 Route::group([
-    'middleware' => 'api',
-    'namespace' => 'App\Http\Controllers',
-    'prefix' => 'auth'
+    'middleware' => ['api','cors', 'json.response'],
+], function () {
+    Route::post('/login', [AuthController::class,'login']);
+    Route::post('/logout', [AuthController::class,'logout']);
+    Route::post('/refresh', [AuthController::class,'refresh']);
+    Route::get('/me', [AuthController::class,'me']);
 
-], function ($router) {
-
-    Route::post('login', 'AuthController@login');
-    Route::post('logout', 'AuthController@logout');
-    Route::post('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me');
+});
+Route::group([
+    'middleware' => ['api','cors', 'json.response'],
+    'prefix' => 'posts'
+], function () {
+    Route::get('/index', [PostController::class,'index']);
+    // Route::post('/update', [PostController::class,'update']);
+    Route::post('/create', [PostController::class,'create']);
+    // Route::get('/delete', [PostController::class,'delete']);
 
 });

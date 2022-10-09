@@ -18,7 +18,7 @@ class PostPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        // return true;
     }
 
     /**
@@ -35,20 +35,20 @@ class PostPolicy
         }
 
         // visitors cannot view unpublished items
-        if ($user === null) {
-            return false;
-        }
+        // if ($user === null) {
+        //     return false;
+        // }
 
         // admin overrides published status
-        if ($user->can('View Post')) {
-            return true;
-        }
-        if (auth()->check() && $user->hasAnyRole(['editor', 'viewer', 'admin', 'super'])) {
-            return true;
-        }
+        // if ($user->can('View Post')) {
+        //     return true;
+        // }
+        // if (auth()->check() && $user->hasAnyRole(['editor', 'viewer', 'admin', 'super'])) {
+        //     return true;
+        // }
 
         // authors can view their own unpublished posts
-        return  $user->id == $post->user_id;
+        // return  $user->id == $post->user_id;
     }
 
     /**
